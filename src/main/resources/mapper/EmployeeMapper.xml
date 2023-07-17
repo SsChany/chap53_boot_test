@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+	<!-- 매퍼XML : Employees 에 대한 모든 쿼리문 보관 -->
+	<mapper namespace="com.javalab.board.dao.EmployeeDao">
+
+	 <select id="getEmployeesList" resultType="EmployeeCommonDto">
+		SELECT EMPLOYEE_ID, 
+			FIRST_NAME, 
+			LAST_NAME, 
+			EMAIL, 
+			PHONE_NUMBER, 
+			HIRE_DATE, 
+			JOB_ID, 
+			SALARY, 
+			COMMISSION_PCT, 
+			MANAGER_ID, 
+			DEPARTMENT_ID 
+		FROM EMPLOYEES 
+		ORDER BY EMPLOYEE_ID
+	 </select>
+	 
+	 <select id="getEmployees" parameterType="int" 
+	 						resultType="EmployeeCommonDto">
+	 	SELECT EMPLOYEE_ID, 
+			FIRST_NAME, 
+			LAST_NAME, 
+			EMAIL, 
+			PHONE_NUMBER, 
+			HIRE_DATE, 
+			JOB_ID, 
+			SALARY, 
+			COMMISSION_PCT, 
+			MANAGER_ID, 
+			DEPARTMENT_ID  
+	 	FROM EMPLOYEES 
+ 		WHERE EMPLOYEE_ID = #{param1}		 
+	 </select>
+
+<!-- 사원 등록 -->
+	 <!-- jdbcType=VARCHAR, jdbcType=NUMERIC 옵션.
+	  	jsp 화면에서 혹시 빈값이 넘어왔을 경우의 처리를 하기 위함.
+	  	문자열 또는 문자 기반 열(예: VARCHAR 또는 CHAR)의 경우 MyBatis는 빈 값을 
+	  	빈 문자열('')로 취급하고 데이터베이스의 해당 열에 전달.
+		숫자 열(예: NUMERIC, INTEGER 또는 DECIMAL)의 경우 MyBatis는 빈 값을 
+		null 값으로 취급하고 데이터베이스의 해당 열에 NULL을 전달하기 위한용도.
+		jsp 화면의 값이 일단 마이바티스 데이터 타입에 바인딩 된 후에 DB로 전달
+		되기 때문에 중간의 마이바티스가 화면의 빈 값을 처리할 때 필요함.
+		이렇게 하지 않기 위해서는 SqlMapConfig.xml(마이바티스 환경 설정파일)
+		에 하면 되지만 현재 설정에서는 그 파일을 사용하지 않음. -->
+    <insert id="register" parameterType="Employees" >
+    <![CDATA[
+        INSERT INTO EMPLOYEES(
+        	EMPLOYEE_ID,
+        	FIRST_NAME,
+        	LAST_NAME,
+        	EMAIL,
+        	PHONE_NUMBER,
+        	HIRE_DATE,
+        	JOB_ID,
+        	SALARY,
+        	COMMISSION_PCT,
+        	MANAGER_ID,
+        	DEPARTMENT_ID) 
+		VALUES (
+			EMPLOYEES_SEQ.NEXTVAL		
+			, #{firstName, jdbcType=VARCHAR}
+			, #{lastName, jdbcType=VARCHAR}
+			, #{email, jdbcType=VARCHAR}
+			, #{phoneNumber, jdbcType=VARCHAR}
+			, to_date(#{hireDate}, 'YYYY-MM-DD')
+			, #{jobId, jdbcType=VARCHAR}
+			, #{salary, jdbcType=NUMERIC }
+			, #{commissionPct, jdbcType=NUMERIC }
+			, #{managerId, jdbcType=NUMERIC}
+			, #{departmentId, jdbcType=NUMERIC}
+		)
+	]]>	 
+    </insert>	 
+
+</mapper>
